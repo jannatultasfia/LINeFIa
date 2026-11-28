@@ -52,5 +52,115 @@ public class UITheme {
         btn.setBorderPainted(false);
         btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        if (width > 0 && height > 0) {
+            btn.setPreferredSize(new Dimension(width, height));
+        } else {
+            btn.setBorder(new EmptyBorder(8, 16, 8, 16));
+        }
+
+        // Hover Effect
+        Color hoverColor = darkenColor(bgColor, 0.88f);
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (btn.isEnabled()) {
+                    btn.setBackground(hoverColor);
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(bgColor);
+            }
+        });
+
+        return btn;
+    }
+
+    public static JButton createButton(String text, Color bgColor, Color fgColor) {
+        return createButton(text, bgColor, fgColor, -1, -1);
+    }
+
+    public static void styleTable(JTable table) {
+        table.setFont(FONT_REGULAR);
+        table.setRowHeight(34);
+        table.setShowGrid(true);
+        table.setGridColor(new Color(241, 245, 249));
+        table.setSelectionBackground(new Color(219, 234, 254)); // Soft Blue
+        table.setSelectionForeground(TEXT_DARK);
+        table.setFillsViewportHeight(true);
+
+        // Header Styling
+        JTableHeader header = table.getTableHeader();
+        header.setFont(FONT_SUBHEADER);
+        header.setBackground(NAV_BAR);
+        header.setForeground(Color.WHITE);
+        header.setPreferredSize(new Dimension(header.getWidth(), 38));
+        header.setReorderingAllowed(false);
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_DARK));
+
+        // Alternating row background renderer
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable tbl, Object val, boolean isSelected, boolean hasFocus, int row, int col) {
+                Component c = super.getTableCellRendererComponent(tbl, val, isSelected, hasFocus, row, col);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                    c.setForeground(TEXT_DARK);
+                }
+                setBorder(new EmptyBorder(0, 10, 0, 10));
+                return c;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+        }
+    }
+
+    public static JPanel createCard(String title) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(CARD_BG);
+
+        Border outer = BorderFactory.createLineBorder(BORDER, 1);
+        Border inner = new EmptyBorder(16, 18, 16, 18);
+
+        if (title != null && !title.isEmpty()) {
+            Border titled = BorderFactory.createTitledBorder(outer, title,
+                    javax.swing.border.TitledBorder.LEFT,
+                    javax.swing.border.TitledBorder.TOP,
+                    FONT_HEADER, TEXT_DARK);
+            card.setBorder(BorderFactory.createCompoundBorder(titled, inner));
+        } else {
+            card.setBorder(BorderFactory.createCompoundBorder(outer, inner));
+        }
+        return card;
+    }
+
+    public static JTextField createTextField(int columns) {
+        JTextField field = new JTextField(columns);
+        field.setFont(FONT_REGULAR);
+        field.setPreferredSize(new Dimension(field.getPreferredSize().width, 32));
+        field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(BORDER_DARK, 1),
+                new EmptyBorder(4, 8, 4, 8)
+        ));
+        return field;
+    }
+
+    public static JScrollPane createScrollPane(Component view) {
+        JScrollPane sp = new JScrollPane(view);
+        sp.setBorder(BorderFactory.createLineBorder(BORDER, 1));
+        sp.getViewport().setBackground(Color.WHITE);
+        return sp;
+    }
+
+    private static Color darkenColor(Color c, float factor) {
+        return new Color(
+                Math.max((int)(c.getRed() * factor), 0),
+                Math.max((int)(c.getGreen() * factor), 0),
+                Math.max((int)(c.getBlue() * factor), 0)
+        );
     }
 }
+        
